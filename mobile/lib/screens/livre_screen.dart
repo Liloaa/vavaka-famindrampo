@@ -97,9 +97,10 @@ class _LivreScreenState extends State<LivreScreen> {
                     return Card(
                       margin: EdgeInsets.zero,
                       child: ListTile(
-                        leading: p.hasImage
-                            ? Icon(Icons.image_outlined, color: couleur)
-                            : Icon(Icons.auto_stories_outlined, color: couleur),
+                        //leading: p.hasImage
+                        //   ? Icon(Icons.image_outlined, color: couleur)
+                        //    : Icon(Icons.auto_stories_outlined, color: couleur),
+                        leading: Icon(Icons.auto_stories_outlined, color: couleur),
                         title: Text(p.titre,
                             maxLines: 2, overflow: TextOverflow.ellipsis),
                         subtitle:
