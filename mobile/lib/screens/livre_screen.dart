@@ -4,6 +4,8 @@ import '../data/models/livre.dart';
 import '../data/models/priere.dart';
 import '../data/services/api_service.dart';
 import 'priere_screen.dart';
+import '../widgets/favori_button.dart';
+import 'search_screen.dart';
 
 class LivreScreen extends StatefulWidget {
   final Livre livre;
@@ -41,6 +43,18 @@ class _LivreScreenState extends State<LivreScreen> {
             maxLines: 2, style: const TextStyle(fontSize: 15)),
         backgroundColor: couleur,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: 'Rechercher dans ce livre',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => SearchScreen(livreIdInitial: widget.livre.id),
+              ),
+            ),
+          ),
+        ],
       ),
       body: FutureBuilder<(List<Categorie>, List<Priere>)>(
         future: _data,
@@ -56,7 +70,9 @@ class _LivreScreenState extends State<LivreScreen> {
                   const Text('Impossible de charger les prières.'),
                   const SizedBox(height: 12),
                   FilledButton(
-                    onPressed: () => setState(() => _data = _charger()),
+                    onPressed: () => setState(() {
+                      _data = _charger();
+                    }),
                     child: const Text('Réessayer'),
                   ),
                 ],
@@ -105,12 +121,15 @@ class _LivreScreenState extends State<LivreScreen> {
                             maxLines: 2, overflow: TextOverflow.ellipsis),
                         subtitle:
                             p.categorieNom != null ? Text(p.categorieNom!) : null,
-                        trailing: p.numeroPage != null
-                            ? Text('Pg. ${p.numeroPage}',
-                                style: TextStyle(
-                                    color: couleur,
-                                    fontWeight: FontWeight.w600))
-                            : null,
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (p.numeroPage != null)
+                              Text('Pg. ${p.numeroPage}',
+                                  style: TextStyle(color: couleur, fontWeight: FontWeight.w600)),
+                            FavoriButton(priereId: p.id, size: 22),
+                          ],
+                        ),
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import '../data/models/priere.dart';
+import '../widgets/favori_button.dart';
 
 class PriereScreen extends StatefulWidget {
   final List<Priere> prieres;
@@ -42,6 +43,7 @@ class _PriereScreenState extends State<PriereScreen> {
         backgroundColor: widget.couleur,
         foregroundColor: Colors.white,
         actions: [
+          FavoriButton(priereId: p.id, couleurInactive: Colors.white),
           IconButton(
             icon: const Icon(Icons.text_decrease),
             onPressed: () => _changerTaille(-2),

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../data/models/livre.dart';
 import '../data/services/api_service.dart';
 import 'livre_screen.dart';
+import 'favoris_screen.dart';
+import 'search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,7 +25,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _recharger() async {
     final f = _api.getLivres();
-    setState(() => _livres = f);
+    setState(() {
+      _livres = f;
+    });
     try {
       await f;
     } catch (_) {}
@@ -32,7 +36,23 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Livres de prières')),
+      appBar: AppBar(
+        title: const Text('Livres de prières'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: 'Rechercher',
+            onPressed: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const SearchScreen())),
+          ),
+          IconButton(
+            icon: const Icon(Icons.favorite_border),
+            tooltip: 'Mes favoris',
+            onPressed: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const FavorisScreen())),
+          ),
+        ],
+      ),
       body: FutureBuilder<List<Livre>>(
         future: _livres,
         builder: (context, snap) {

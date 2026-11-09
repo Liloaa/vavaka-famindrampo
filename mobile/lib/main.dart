@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/favoris_provider.dart';
 import 'screens/home_screen.dart';
 
-void main() => runApp(const VavakaApp());
+void main() => runApp(
+      ChangeNotifierProvider(
+        create: (_) => FavorisProvider()..charger(),
+        child: const VavakaApp(),
+      ),
+    );
 
 class VavakaApp extends StatelessWidget {
   const VavakaApp({super.key});
