@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('Impossible de charger les livres.',
+                    const Text('Tsy mety misokatra ireo boky.',
                         textAlign: TextAlign.center),
                     const SizedBox(height: 12),
                     FilledButton(
