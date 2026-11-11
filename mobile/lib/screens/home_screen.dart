@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Livres de prières'),
+        title: const Text('Boky Vakaka Katolika'),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -144,7 +144,7 @@ class _LivreCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text('${livre.nombrePrieres} prières',
+                    Text('${livre.nombrePrieres} vavaka',
                         style: const TextStyle(fontSize: 12)),
                   ],
                 ),

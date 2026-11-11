@@ -19,7 +19,7 @@ Future<void> ouvrirPriere(
     ));
   } catch (_) {
     messenger.showSnackBar(
-      const SnackBar(content: Text('Impossible d\'ouvrir la prière. Vérifiez la connexion.')),
+      const SnackBar(content: Text('Tsy afaka manokatra ny vavaka. Hamarino ny connexions.')),
     );
   }
 }

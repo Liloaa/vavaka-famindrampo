@@ -67,7 +67,7 @@ class _LivreScreenState extends State<LivreScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('Impossible de charger les prières.'),
+                  const Text('Tsy afaka ny mamoaka ny boky.'),
                   const SizedBox(height: 12),
                   FilledButton(
                     onPressed: () => setState(() {
@@ -82,7 +82,7 @@ class _LivreScreenState extends State<LivreScreen> {
 
           final (categories, toutes) = snap.data!;
           if (toutes.isEmpty) {
-            return const Center(child: Text('Aucune prière pour le moment.'));
+            return const Center(child: Text('Tsy misy vavaka ny amin\'ity.'));
           }
           final prieres = _categorieId == null
               ? toutes

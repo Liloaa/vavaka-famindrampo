@@ -16,7 +16,7 @@ class VavakaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Vavaka Famindrapo',
+      title: 'Vavaka Katolika',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorSchemeSeed: const Color(0xFF0C447C),

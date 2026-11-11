@@ -39,7 +39,7 @@ class _PriereScreenState extends State<PriereScreen> {
     final p = widget.prieres[_courant];
     return Scaffold(
       appBar: AppBar(
-        title: Text(p.numeroPage != null ? 'Page ${p.numeroPage}' : 'Prière'),
+        title: Text(p.numeroPage != null ? 'Page ${p.numeroPage}' : 'Vavaka'),
         backgroundColor: widget.couleur,
         foregroundColor: Colors.white,
         actions: [

@@ -34,7 +34,7 @@ class FavorisScreen extends StatelessWidget {
           const SizedBox(height: 12),
           Center(
             child: Text(
-              fav.erreur ?? 'Aucun favori pour le moment.\nTouchez le cœur d\'une prière pour l\'ajouter.',
+              fav.erreur ?? 'Tsy misy favori ny amin\'izao.\nKitiho any anaty vavaka any mba hampiditra.',
               textAlign: TextAlign.center,
             ),
           ),
