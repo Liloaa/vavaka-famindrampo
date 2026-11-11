@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../data/models/livre.dart';
 import '../data/services/api_service.dart';
+import '../providers/theme_provider.dart';
 import 'livre_screen.dart';
 import 'favoris_screen.dart';
 import 'search_screen.dart';
@@ -35,10 +37,28 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final modeNuit = context.watch<ThemeProvider>().modeNuit;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Boky Vakaka Katolika'),
         actions: [
+          IconButton(
+            icon: Icon(modeNuit ? Icons.light_mode_outlined : Icons.dark_mode_outlined),
+            tooltip: modeNuit ? 'Activer le mode jour' : 'Activer le mode nuit',
+            onPressed: () async {
+              try {
+                await context.read<ThemeProvider>().basculer();
+              } catch (_) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Impossible d’enregistrer le thème choisi.'),
+                    ),
+                  );
+                }
+              }
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.search),
             tooltip: 'Rechercher',

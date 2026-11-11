@@ -15,3 +15,9 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## Mode nuit
+
+Le bouton de lune sur l’écran d’accueil active le thème sombre de l’application.
+Le choix est enregistré sur l’appareil avec `shared_preferences` et restauré au
+démarrage.
