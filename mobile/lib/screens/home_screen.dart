@@ -2,63 +2,22 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../data/models/livre.dart';
-import '../data/services/api_service.dart';
-import '../providers/theme_provider.dart';
-import 'livre_screen.dart';
+import '../data/services/image_cache.dart';
+import '../providers/library_provider.dart';
 import 'favoris_screen.dart';
+import 'livre_screen.dart';
 import 'search_screen.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final _api = ApiService();
-  late Future<List<Livre>> _livres;
-
-  @override
-  void initState() {
-    super.initState();
-    _livres = _api.getLivres();
-  }
-
-  Future<void> _recharger() async {
-    final f = _api.getLivres();
-    setState(() {
-      _livres = f;
-    });
-    try {
-      await f;
-    } catch (_) {}
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final modeNuit = context.watch<ThemeProvider>().modeNuit;
+    final lib = context.watch<LibraryProvider>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Boky Vakaka Katolika'),
+        title: const Text('Livres de prières'),
         actions: [
-          IconButton(
-            icon: Icon(modeNuit ? Icons.light_mode_outlined : Icons.dark_mode_outlined),
-            tooltip: modeNuit ? 'Activer le mode jour' : 'Activer le mode nuit',
-            onPressed: () async {
-              try {
-                await context.read<ThemeProvider>().basculer();
-              } catch (_) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Impossible d’enregistrer le thème choisi.'),
-                    ),
-                  );
-                }
-              }
-            },
-          ),
           IconButton(
             icon: const Icon(Icons.search),
             tooltip: 'Rechercher',
@@ -73,40 +32,75 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: FutureBuilder<List<Livre>>(
-        future: _livres,
-        builder: (context, snap) {
-          if (snap.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snap.hasError) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('Tsy mety misokatra ireo boky.',
-                        textAlign: TextAlign.center),
-                    const SizedBox(height: 12),
-                    FilledButton(
-                        onPressed: _recharger, child: const Text('Réessayer')),
-                  ],
-                ),
+      body: Column(
+        children: [
+          if (lib.synchro) const LinearProgressIndicator(minHeight: 2),
+          if (lib.horsLigne && lib.aDonnees)
+            Container(
+              width: double.infinity,
+              color: Colors.amber.shade100,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              child: const Row(
+                children: [
+                  Icon(Icons.cloud_off, size: 16),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Hors ligne : contenu enregistré sur le téléphone',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ),
+                ],
               ),
-            );
-          }
-          final livres = snap.data!;
-          return RefreshIndicator(
-            onRefresh: _recharger,
-            child: ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: livres.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
-              itemBuilder: (_, i) => _LivreCard(livre: livres[i]),
             ),
-          );
-        },
+          Expanded(child: _contenu(context, lib)),
+        ],
+      ),
+    );
+  }
+
+  Widget _contenu(BuildContext context, LibraryProvider lib) {
+    if (!lib.pret) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (!lib.aDonnees) {
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          const SizedBox(height: 120),
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              children: [
+                const Icon(Icons.cloud_download_outlined, size: 56),
+                const SizedBox(height: 12),
+                Text(
+                  lib.synchro
+                      ? 'Téléchargement des livres…\nCela peut prendre un moment la première fois.'
+                      : 'Connectez-vous à internet une première fois pour télécharger les livres.',
+                  textAlign: TextAlign.center,
+                ),
+                if (!lib.synchro) ...[
+                  const SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: () => lib.synchroniser(),
+                    child: const Text('Réessayer'),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+    return RefreshIndicator(
+      onRefresh: lib.synchroniser,
+      child: ListView.separated(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        itemCount: lib.livres.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        itemBuilder: (_, i) => _LivreCard(livre: lib.livres[i]),
       ),
     );
   }
@@ -142,6 +136,7 @@ class _LivreCard extends StatelessWidget {
                   child: livre.couvertureUrl != null
                       ? CachedNetworkImage(
                           imageUrl: livre.couvertureUrl!,
+                          cacheManager: CacheImages.manager,
                           fit: BoxFit.cover,
                           errorWidget: (_, __, ___) => _placeholder(),
                         )
@@ -164,7 +159,7 @@ class _LivreCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text('${livre.nombrePrieres} vavaka',
+                    Text('${livre.nombrePrieres} prières',
                         style: const TextStyle(fontSize: 12)),
                   ],
                 ),

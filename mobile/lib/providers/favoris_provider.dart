@@ -1,46 +1,31 @@
 import 'package:flutter/foundation.dart';
-import '../core/utils/device_id.dart';
-import '../data/models/favori.dart';
-import '../data/services/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FavorisProvider extends ChangeNotifier {
-  final _api = ApiService();
-  List<Favori> _favoris = [];
+  final List<String> _ids = []; // le plus récent en premier
   bool _charge = false;
-  String? _erreur;
-  String? _deviceId;
 
-  List<Favori> get favoris => _favoris;
+  List<String> get ids => List.unmodifiable(_ids);
   bool get charge => _charge;
-  String? get erreur => _erreur;
 
-  bool estFavori(String priereId) => _favoris.any((f) => f.priereId == priereId);
+  bool estFavori(String priereId) => _ids.contains(priereId);
 
   Future<void> charger() async {
-    try {
-      _deviceId ??= await DeviceId.get();
-      _favoris = await _api.getFavoris(_deviceId!);
-      _erreur = null;
-    } catch (_) {
-      _erreur = 'Impossible de charger les favoris.';
-    }
+    final prefs = await SharedPreferences.getInstance();
+    _ids
+      ..clear()
+      ..addAll(prefs.getStringList('favoris') ?? const []);
     _charge = true;
     notifyListeners();
   }
 
-  /// Ajoute ou retire un favori. Renvoie false en cas d'échec.
+  /// Ajoute ou retire un favori. Renvoie false si l'enregistrement a échoué.
   Future<bool> basculer(String priereId) async {
-    final id = _deviceId ??= await DeviceId.get();
-    final existants = _favoris.where((f) => f.priereId == priereId).toList();
+    if (!_ids.remove(priereId)) _ids.insert(0, priereId);
+    notifyListeners();
     try {
-      if (existants.isNotEmpty) {
-        await _api.supprimerFavori(id, existants.first.id);
-        _favoris.removeWhere((f) => f.priereId == priereId);
-        notifyListeners();
-      } else {
-        await _api.ajouterFavori(id, priereId);
-        await charger();
-      }
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList('favoris', _ids);
       return true;
     } catch (_) {
       return false;

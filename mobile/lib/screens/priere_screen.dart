@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import '../data/models/priere.dart';
 import '../widgets/favori_button.dart';
+import '../data/services/image_cache.dart';
 
 class PriereScreen extends StatefulWidget {
   final List<Priere> prieres;
@@ -118,6 +119,7 @@ class _PriereScreenState extends State<PriereScreen> {
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: CachedNetworkImage(
+                cacheManager: CacheImages.manager,
                 imageUrl: p.imageUrl!,
                 fit: BoxFit.contain,
                 errorWidget: (_, __, ___) => const SizedBox.shrink(),
