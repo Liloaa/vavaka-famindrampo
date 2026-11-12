@@ -22,10 +22,6 @@ app.use('/api/prieres', require('./routes/prieres'));
 app.use('/api/search', require('./routes/recherche'));
 app.use('/api/favoris', require('./routes/favoris'));
 app.use('/api/admin', require('./routes/admin'));
-
-app.use((req, res) => res.status(404).json({ erreur: 'Route introuvable' }));
-app.use(errorHandler);
-
 app.use('/api/sync', require('./routes/sync'));
 
 app.get('/api/sante', asyncHandler(async (req, res) => {
@@ -33,5 +29,8 @@ app.get('/api/sante', asyncHandler(async (req, res) => {
   if (error) throw error;
   res.json({ statut: 'ok' });
 }));
+
+app.use((req, res) => res.status(404).json({ erreur: 'Route introuvable' }));
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`Serveur démarré sur http://localhost:${PORT}`));

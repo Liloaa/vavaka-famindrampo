@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: vavaka-famindrapo-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/sante
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: ADMIN_KEY
+        sync: false
