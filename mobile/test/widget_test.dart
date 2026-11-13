@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vavaka_famindrapo/main.dart';
+import 'package:vavaka_famindrapo/providers/library_provider.dart';
 import 'package:vavaka_famindrapo/providers/theme_provider.dart';
 
 void main() {
@@ -14,18 +15,30 @@ void main() {
     await tester.pumpWidget(
       ChangeNotifierProvider.value(
         value: themeProvider,
-        child: const VavakaApp(),
+        child: ChangeNotifierProvider(
+          create: (_) => LibraryProvider(),
+          child: const VavakaApp(),
+        ),
       ),
     );
-    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(
       Theme.of(tester.element(find.byType(Scaffold))).brightness,
       Brightness.light,
     );
     await tester.tap(find.byTooltip('Activer le mode nuit'));
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
+    expect(themeProvider.modeNuit, isTrue);
+    expect(
+      tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
+      ThemeMode.dark,
+    );
     expect(
       Theme.of(tester.element(find.byType(Scaffold))).brightness,
       Brightness.dark,

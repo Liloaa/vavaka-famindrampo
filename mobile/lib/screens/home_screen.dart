@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../data/models/livre.dart';
 import '../data/services/image_cache.dart';
 import '../providers/library_provider.dart';
+import '../providers/theme_provider.dart';
 import 'favoris_screen.dart';
 import 'livre_screen.dart';
 import 'search_screen.dart';
@@ -14,10 +15,18 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lib = context.watch<LibraryProvider>();
+    final modeNuit = context.watch<ThemeProvider>().modeNuit;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Livres de prières'),
         actions: [
+          IconButton(
+            icon: Icon(
+              modeNuit ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+            ),
+            tooltip: modeNuit ? 'Activer le mode jour' : 'Activer le mode nuit',
+            onPressed: () => context.read<ThemeProvider>().basculer(),
+          ),
           IconButton(
             icon: const Icon(Icons.search),
             tooltip: 'Rechercher',
